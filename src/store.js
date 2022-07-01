@@ -1,49 +1,53 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
+
 
 Vue.use(Vuex)
 
-const URL = 'https://628e9f0c368687f3e719d47f.mockapi.io/usuarios'
 
 
 export default new Vuex.Store({ //Funcion constructora estatica, construye una instancia de patron de estao global vuex
     state:{
-      users:[],
-      entro: false,
+      squares:[],
+      colors: [],
+      pickedColor: "",
+      cCount: 6,
+      message:"",
+      cDisplay: "",
+      hColor: "steelblue",
+      buttonMessage: "New Colors!",
+      isHard: true
     },
     actions:{
-      async getUsuariosAxios({commit}){
-        try {
-          let  {data}  = await axios(URL)
-          commit('getUsers', data)
-        } catch (error) {
-          console.error('Error Axios', error)
+      clickSquare({commit}, clickedColor){
+        if (clickedColor === this.state.pickedColor) {
+          var msg = "You Picked Right!";
+          var bMsg = "Play Again!";
+          commit("setMsg", msg)
+          commit("setBmsg", bMsg)
+          commit("setHColor")
+        } else {
+          msg = "Try Again!";
+          commit("setMsg", msg)
         }
       },
-      async postUser({commit}, newUser) {
-        try {
-          let { data: user } = await axios.post(URL, newUser, {'content-type' : 'application/json'})
-          console.log('AXIOS POST user', user)
-          commit('postUser', true)
-        }
-        catch(error) {
-          console.error('Error en postUsuario()', error.message)
-        }
-      },
-      clearUsers({commit}){
-        commit('clearU')
+      setDificultad({commit}, bool){
+        commit("setDificultad", bool)
       }
     }, 
     mutations:{
-      getUsers(state, rta){
-        state.users = rta
+      setMsg(state, msg){
+        state.message = msg
       },
-      postUser(state, rta){
-        state.state = rta
+      setBmsg(state, msg){
+        state.buttonMessage = msg
       },
-      clearU(state){
-        state.users = 0
+      setDificultad(state, bool){
+        state.isHard = bool
+      },
+      setHColor(state){
+        state.hColor = this.state.pickedColor
       }
+
     }
 })
